@@ -145,7 +145,24 @@ Data columns (total 3 columns):
 dtypes: int64(3)
 memory usage: 2.1 MB 
 ```
-**_Data Vizualisasi_**
+```python
+rating_df['rating'].describe()
+```
+Kode diatas memiliki output:
+```python
+ 	rating
+count 	93045.000000
+mean 	6.114826
+std 	3.778899
+min 	-1.000000
+25% 	6.000000
+50% 	8.000000
+75% 	9.000000
+max 	10.000000
+
+dtype: float64
+```
+  **_Data Vizualisasi_**
 
 Visualisasi data adalah proses representasi grafis dari informasi dan data. Dengan menggunakan elemen visual seperti grafik, diagram, dan peta, visualisasi data menyediakan cara yang intuitif dan mudah diakses untuk melihat dan memahami tren, anomali, dan pola dalam data. Tujuan utama dari visualisasi data adalah untuk mengkomunikasikan informasi secara jelas dan efisien kepada pengguna, sehingga memudahkan pemahaman, analisis, dan pengambilan keputusan berdasarkan data tersebut
 # Data Preparation
