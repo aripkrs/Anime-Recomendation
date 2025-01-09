@@ -166,9 +166,10 @@ dtype: float64
 Visualisasi Data untuk `anime_df`:
 
 * Univariate Analysis
+  
   ![Untitled](https://github.com/user-attachments/assets/5b651d6e-7763-4b76-9c64-b7502ca4cfe5)
-
   Gambar 1. Anime Categories Distribution
+
 Berdasarkan visualisasi diatas distribusi anime terbesar di media TV
 
   ![Untitled](https://github.com/user-attachments/assets/50441481-d7af-4b03-99a9-7d5bd0d79128)
@@ -198,9 +199,11 @@ anime_df.sort_values(by='members', ascending=False).head(10)
 |3 |	9253 |	Steins;Gate 	|Sci-Fi, Thriller| 	TV 	|24 	|9.17 |	673572|
 |445| 	10620| 	Mirai Nikki (TV) 	|Action, Mystery, Psychological, Shounen, Super...| 	TV |	26 |	8.07| 	657190|
 |131| 	4224 |	Toradora! 	|Comedy, Romance, School, Slice of Life| 	TV 	|25 |	8.45 	|633817|
+
 Menampilkan daftar anime dengan jumlah anggota community terbanyak. Misalnya, anime Death Note memiliki jumlah anggota community terbanyak, yaitu sebesar 1013917.
 
 ## Missing value
+
 Missing Values adalah data yang hilang atau tidak tercatat dalam dataset. Hal ini bisa terjadi karena berbagai alasan, seperti kesalahan entri data, kerusakan data, atau tidak tersedianya informasi saat pengumpulan data. Missing values dapat mempengaruhi kualitas model machine learning dan hasil analisis statistik. Oleh karena itu, penting untuk mengidentifikasi, menganalisis, dan mengatasi missing values dengan metode seperti imputasi, di mana nilai yang hilang diganti dengan estimasi, atau dengan menghapus baris atau kolom yang terdampak.
 
 Dataset untuk `anime_df`:
@@ -237,9 +240,64 @@ Tidak ada missing value
 
 ## Duplikat data
 
+```python
+# Cek baris duplikat dalam dataset
+duplicates_rating = rating_df.duplicated()
+
+# Hitung jumlah baris duplikat
+duplicate_rating= duplicates_rating.sum()
+
+# Cetak jumlah baris duplikat
+print(f"Number of duplicate rows: {duplicate_rating}")
+```
+```python
+Number of duplicate rows: 0
+```
+
+```python
+# Cek baris duplikat dalam dataset
+duplicates_anime = anime_df.duplicated()
+
+# Hitung jumlah baris duplikat
+duplicate_anime = duplicates_anime.sum()
+
+# Cetak jumlah baris duplikat
+print(f"Number of duplicate rows: {duplicate_anime}")
+```
+```python
+Number of duplicate rows: 0
+```
+Berdasarkan hasil tersebut, tidak ditemukan adanya data duplikat, maka tidak ada juga proses penghapusannya.
+
+## Missing values
+```python
+rating_df['rating'].describe()
+```
+```python
+ 	    rating
+count 	93045.000000
+mean 	6.114826
+std 	3.778899
+min 	-1.000000
+25% 	6.000000
+50% 	8.000000
+75% 	9.000000
+max 	10.000000
+```
+Dataset rating anime memiliki rating terendah yang diberikan user pada suatu anime adalah -1 dan rating tertinggi adalah 10. Rating -1 menandakan bahwa user menonton anime, namun tidak memberikan rating.
 
 # Data Preparation
+## Data Cleaning
+### Removal Duplicates
 
+**1 duplikat data akan kita hapus dalam rating_df**
+
+```python
+anime_df=anime_df.drop_duplicates()
+```
+Berhasil dihapus duplikat data
+
+### Handle Missing Value
 # Modeling
 
 # Evaluation
