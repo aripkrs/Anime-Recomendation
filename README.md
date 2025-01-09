@@ -1,4 +1,4 @@
-![Untitled](https://github.com/user-attachments/assets/b012c361-eb56-493b-a68f-32274e9a7a65)# Laporan Proyek Anime Recomendation-Arip Kristiyanto
+# Laporan Proyek Anime Recomendation-Arip Kristiyanto
 # Project Overview
 Anime adalah salah satu media hiburan yang saat ini sedang banyak diperbincangkan. Anime
 sendiri merupakan film animasi dengan teknik penggambaran yang melibatkan emosi dari setiap
