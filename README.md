@@ -1,4 +1,4 @@
-# Laporan Proyek Anime Recomendation-Arip Kristiyanto
+![Untitled](https://github.com/user-attachments/assets/b012c361-eb56-493b-a68f-32274e9a7a65)# Laporan Proyek Anime Recomendation-Arip Kristiyanto
 # Project Overview
 Anime adalah salah satu media hiburan yang saat ini sedang banyak diperbincangkan. Anime
 sendiri merupakan film animasi dengan teknik penggambaran yang melibatkan emosi dari setiap
@@ -67,7 +67,7 @@ Atribut-atribut pada rating_df.csv:
    - ```anime_id``` - anime yang diberi peringkat oleh pengguna ini.
    - ```rating``` - Peringkat dari 10 yang diberikan pengguna ini (-1 jika pengguna menontonnya tetapi tidak memberikan peringkat).
 
-**_Exploratory Data Analysis_**
+## **_Exploratory Data Analysis_**
 
 Exploratory Data Analysis (EDA) adalah pendekatan analisis data yang bertujuan untuk memahami karakteristik utama dari kumpulan data. EDA melibatkan penggunaan teknik statistik dan visualisasi grafis untuk menemukan pola, hubungan, atau anomali untuk membentuk hipotesis. Proses ini sering kali tidak terstruktur dan dianggap sebagai langkah awal penting dalam analisis data yang membantu menentukan arah analisis lebih lanjut.
 
@@ -162,9 +162,84 @@ max 	10.000000
 
 dtype: float64
 ```
-  **_Data Vizualisasi_**
+##  **_Data Vizualisasi_**
+Visualisasi Data untuk `anime_df`:
 
-Visualisasi data adalah proses representasi grafis dari informasi dan data. Dengan menggunakan elemen visual seperti grafik, diagram, dan peta, visualisasi data menyediakan cara yang intuitif dan mudah diakses untuk melihat dan memahami tren, anomali, dan pola dalam data. Tujuan utama dari visualisasi data adalah untuk mengkomunikasikan informasi secara jelas dan efisien kepada pengguna, sehingga memudahkan pemahaman, analisis, dan pengambilan keputusan berdasarkan data tersebut
+* Univariate Analysis
+  ![Untitled](https://github.com/user-attachments/assets/5b651d6e-7763-4b76-9c64-b7502ca4cfe5)
+
+  Gambar 1. Anime Categories Distribution
+Berdasarkan visualisasi diatas distribusi anime terbesar di media TV
+
+  ![Untitled](https://github.com/user-attachments/assets/50441481-d7af-4b03-99a9-7d5bd0d79128)
+
+  Gambar 2. Anime's Average Ratings Distribution
+
+Visualisasi Data untuk `rating_df`:
+![Untitled](https://github.com/user-attachments/assets/f812ea7f-d82e-41d8-8969-caeb8f81d028)
+
+Gambar 3. Count Plot Rating
+
+![Untitled](https://github.com/user-attachments/assets/432ed6e3-c5d5-48dc-827c-5fa925a33f2a)
+
+Gambar 4.  Pie Chart Rating
+
+* Multivariate Analysis
+ ```python
+anime_df.sort_values(by='members', ascending=False).head(10)
+```
+| 	|anime_id| 	name |	genre| 	type| 	episodes |	rating 	|members|
+|---|-------|-------|------|-------|--------|----------|--------|
+|40 |1535 |	Death Note |	Mystery, Police, Psychological, Supernatural, ...| 	TV |	37 |	8.71| 	1013917|
+|86| 	16498 |	Shingeki no Kyojin| 	Action, Drama, Fantasy, Shounen, Super Power| 	TV| 	25|	8.54| 	896229|
+|804|	11757 |	Sword Art Online |	Action, Adventure, Fantasy, Game, Romance| 	TV |	25 |	7.83| 	893100|
+|1 |	5114 	|Fullmetal Alchemist: Brotherhood 	|Action, Adventure, Drama, Fantasy, Magic, Mili...| 	TV| 	64 |	9.26 |	793665|
+|159| 	6547| 	Angel Beats! 	|Action, Comedy, Drama, School, Supernatural| 	TV| 	13 |	8.39 |	717796|
+|19 |	1575 |	Code Geass: Hangyaku no Lelouch |	Action, Mecha, Military, School, Sci-Fi, Super...| 	TV |	25 	|8.83| 	715151|
+|841| 	20 |	Naruto 	|Action, Comedy, Martial Arts, Shounen, Super P...| 	TV 	|220| 	7.81| 	683297|
+|3 |	9253 |	Steins;Gate 	|Sci-Fi, Thriller| 	TV 	|24 	|9.17 |	673572|
+|445| 	10620| 	Mirai Nikki (TV) 	|Action, Mystery, Psychological, Shounen, Super...| 	TV |	26 |	8.07| 	657190|
+|131| 	4224 |	Toradora! 	|Comedy, Romance, School, Slice of Life| 	TV 	|25 |	8.45 	|633817|
+Menampilkan daftar anime dengan jumlah anggota community terbanyak. Misalnya, anime Death Note memiliki jumlah anggota community terbanyak, yaitu sebesar 1013917.
+
+## Missing value
+Missing Values adalah data yang hilang atau tidak tercatat dalam dataset. Hal ini bisa terjadi karena berbagai alasan, seperti kesalahan entri data, kerusakan data, atau tidak tersedianya informasi saat pengumpulan data. Missing values dapat mempengaruhi kualitas model machine learning dan hasil analisis statistik. Oleh karena itu, penting untuk mengidentifikasi, menganalisis, dan mengatasi missing values dengan metode seperti imputasi, di mana nilai yang hilang diganti dengan estimasi, atau dengan menghapus baris atau kolom yang terdampak.
+
+Dataset untuk `anime_df`:
+```python
+anime_df.isnull().sum()
+```
+```python
+ 	       0
+anime_id 	0
+name 	0
+genre 	62
+type 	25
+episodes 	0
+rating 	230
+members 	0
+
+dtype: int64
+```
+Berdasarkan hasil diatas, terdapat 3 missing values yaitu genre, type, rating
+
+Dataset untuk `rating_df`:
+```python
+rating_df.isnull().sum()
+```
+```python
+ 	      0
+user_id 	0
+anime_id 	0
+rating 	0
+
+dtype: int64
+```
+Tidak ada missing value
+
+## Duplikat data
+
+
 # Data Preparation
 
 # Modeling
