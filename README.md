@@ -63,9 +63,9 @@ Atribut-atribut pada anime_df.csv:
 
 Atribut-atribut pada rating_df.csv:
 
-    - ```user_id``` - ID pengguna yang dibuat secara acak.
-    - ```anime_id``` - anime yang diberi peringkat oleh pengguna ini.
-    - ```rating``` - Peringkat dari 10 yang diberikan pengguna ini (-1 jika pengguna menontonnya tetapi tidak memberikan peringkat).
+   - ```user_id``` - ID pengguna yang dibuat secara acak.
+   - ```anime_id``` - anime yang diberi peringkat oleh pengguna ini.
+   - ```rating``` - Peringkat dari 10 yang diberikan pengguna ini (-1 jika pengguna menontonnya tetapi tidak memberikan peringkat).
 
 **_Exploratory Data Analysis_**
 
@@ -94,7 +94,47 @@ anime_df.keys()
 ```python
 anime_df.info()
 ```
-```python  <class 'pandas.core.frame.DataFrame'>
+```python  <<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 12294 entries, 0 to 12293
+Data columns (total 7 columns):
+ #   Column    Non-Null Count  Dtype  
+---  ------    --------------  -----  
+ 0   anime_id  12294 non-null  int64  
+ 1   name      12294 non-null  object 
+ 2   genre     12232 non-null  object 
+ 3   type      12269 non-null  object 
+ 4   episodes  12294 non-null  object 
+ 5   rating    12064 non-null  float64
+ 6   members   12294 non-null  int64  
+dtypes: float64(1), int64(2), object(4)
+memory usage: 672.5+ KB
+ ```
+Masih ada beberapa tindakan yang perlu dilakukan untuk `anime_df`. Proses pembersihan dan persiapan dataset akan dikerjakan lebih lanjut pada tahap selanjutnya.
+Berikut ini adalah EDA yang dilakukan untuk `rating_df`:
+```python
+  rating_df.shape
+  ```
+  Kode diatas memiliki output:
+  ```python
+  (93045, 3)
+  ```
+  Berdasarkan output diatas, `movie_df` memiliki:
+  - 93045 baris data
+  - 3 kolom data
+  
+ ```python
+rating_df.keys()
+ ```
+  Kode diatas memiliki output:
+ ```python
+ Index(['user_id', 'anime_id', 'rating'], dtype='object')
+ ```
+    
+```python
+rating_df.info()
+```
+Kode diatas memiliki output:
+```python <class 'pandas.core.frame.DataFrame'>
 RangeIndex: 93045 entries, 0 to 93044
 Data columns (total 3 columns):
  #   Column    Non-Null Count  Dtype
@@ -103,9 +143,11 @@ Data columns (total 3 columns):
  1   anime_id  93045 non-null  int64
  2   rating    93045 non-null  int64
 dtypes: int64(3)
-memory usage: 2.1 MB
- ```
+memory usage: 2.1 MB 
+```
+**_Data Vizualisasi_**
 
+Visualisasi data adalah proses representasi grafis dari informasi dan data. Dengan menggunakan elemen visual seperti grafik, diagram, dan peta, visualisasi data menyediakan cara yang intuitif dan mudah diakses untuk melihat dan memahami tren, anomali, dan pola dalam data. Tujuan utama dari visualisasi data adalah untuk mengkomunikasikan informasi secara jelas dan efisien kepada pengguna, sehingga memudahkan pemahaman, analisis, dan pengambilan keputusan berdasarkan data tersebut
 # Data Preparation
 
 # Modeling
