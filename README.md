@@ -172,17 +172,15 @@ Visualisasi Data untuk `anime_df`:
 Berdasarkan visualisasi diatas distribusi anime terbesar di media TV
 
   ![Untitled](https://github.com/user-attachments/assets/50441481-d7af-4b03-99a9-7d5bd0d79128)
-
   Gambar 2. Anime's Average Ratings Distribution
 
 Visualisasi Data untuk `rating_df`:
-![Untitled](https://github.com/user-attachments/assets/f812ea7f-d82e-41d8-8969-caeb8f81d028)
 
-Gambar 3. Count Plot Rating
+ ![Untitled](https://github.com/user-attachments/assets/f812ea7f-d82e-41d8-8969-caeb8f81d028)
+ Gambar 3. Count Plot Rating
 
-![Untitled](https://github.com/user-attachments/assets/432ed6e3-c5d5-48dc-827c-5fa925a33f2a)
-
-Gambar 4.  Pie Chart Rating
+ ![Untitled](https://github.com/user-attachments/assets/432ed6e3-c5d5-48dc-827c-5fa925a33f2a)
+ Gambar 4.  Pie Chart Rating
 
 * Multivariate Analysis
  ```python
