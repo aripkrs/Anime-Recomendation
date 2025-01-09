@@ -43,6 +43,68 @@ dengan mudah menavigasi banyaknya konten.
 - Melakukan perhitungan skor presisi untuk mengukur performa dari model sistem rekomendasi film dengan content-based learning. Kemudian, menggunakan skor RMSE atau root mean squared error untuk mengukur performa dari model sistem rekomendasi film dengan colaborative filtering.
 
 # Data Understanding
+Dataset yang digunakan untuk pembuatan model system recommendation ini adalah dataset "📺 Anime ⛩️ Recomendation Systems 🔺🔻" yang tersedia di situs [kaggle](https://www.kaggle.com/code/dumanmesut/anime-recomendation-systems) yang berisi data-data mengenai anime beserta rating yang diberikan oleh para penggemar.
+
+Terdapat 2 file didalamnya, dataset animes.csv dan rating.csv. animes terdiri dari , baris 12294 data dan 7 kolom data. rating.csv terdiri dari 93045 baris data dan 3 kolom data.
+
+Kedua dataset tersebut dapat digunakan untuk membuat system recommendation, baik Content-Based Filtering maupun Collaborative Filtering
+
+Berikut ini adalah infomasi lainnya mengenai atribut-atribut yang terdapat pada dua dataset tersebut:
+
+Atribut-atribut pada anime_df.csv:
+
+   - ```anime_id``` - identifikasi unik anime
+   - ```name``` - full name .
+   - ```genre``` - genre dari anime
+   - ```type``` - movie, TV, OVA, etc.
+   - ```episodes``` - berapa banyak episode dalam acara ini. (1 jika film)
+   - ```rating``` - peringkat rata-rata dari 10 untuk anime
+   - ```members``` - umlah anggota komunitas yang ada di grup anime
+
+Atribut-atribut pada rating_df.csv:
+
+    - ```user_id``` - ID pengguna yang dibuat secara acak.
+    - ```anime_id``` - anime yang diberi peringkat oleh pengguna ini.
+    - ```rating``` - Peringkat dari 10 yang diberikan pengguna ini (-1 jika pengguna menontonnya tetapi tidak memberikan peringkat).
+
+**_Exploratory Data Analysis_**
+
+Exploratory Data Analysis (EDA) adalah pendekatan analisis data yang bertujuan untuk memahami karakteristik utama dari kumpulan data. EDA melibatkan penggunaan teknik statistik dan visualisasi grafis untuk menemukan pola, hubungan, atau anomali untuk membentuk hipotesis. Proses ini sering kali tidak terstruktur dan dianggap sebagai langkah awal penting dalam analisis data yang membantu menentukan arah analisis lebih lanjut.
+
+Berikut ini adalah EDA yang dilakukan untuk `anime_df`:
+```python
+  anime_df.shape
+  ```
+  Kode diatas memiliki output:
+  ```python
+  (12294, 7)
+  ```
+  Berdasarkan output diatas, `movie_df` memiliki:
+  - 12294 baris data
+  - 7 kolom data
+  
+ ```python
+anime_df.keys()
+ ```
+  Kode diatas memiliki output:
+ ```python
+ Index(['anime_id', 'name', 'genre', 'type', 'episodes', 'rating', 'members'], dtype='object')
+ ```
+    
+```python
+anime_df.info()
+```
+```python  <class 'pandas.core.frame.DataFrame'>
+RangeIndex: 93045 entries, 0 to 93044
+Data columns (total 3 columns):
+ #   Column    Non-Null Count  Dtype
+---  ------    --------------  -----
+ 0   user_id   93045 non-null  int64
+ 1   anime_id  93045 non-null  int64
+ 2   rating    93045 non-null  int64
+dtypes: int64(3)
+memory usage: 2.1 MB
+ ```
 
 # Data Preparation
 
