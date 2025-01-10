@@ -298,6 +298,57 @@ anime_df=anime_df.drop_duplicates()
 Berhasil dihapus duplikat data
 
 ### Handle Missing Value
+
+Berdasarkan hasil diatas, terdapat 3 missing values yaitu `genre`` type`` rating`.
+
+```python
+anime_df.dropna(inplace =True)
+anime_df.shape
+```
+Missing value Berhasil ditangani.
+
+### Outliers Detection and Removal
+
+Berdasarkan output data understanding, terlihat bahwa nilai terkecil dari review adalah -1 dan terbesarnya adalah 10. Rating -1 menandakan bahwa user menonton anime, namun tidak memberikan rating.
+```python
+rating_df = rating_df[~(rating_df.rating == -1)]
+rating_df.describe().apply(lambda s: s.apply('{0:.2f}'.format))
+```
+```python
+|      |user_id| anime_id|rating|
+|-------|--------|--------|------|
+|count |	74776.00 |	74776.00 |74776.00|
+|mean |	498.80 |	10640.70 |	7.85|
+|std 	|267.17 	|9016.21 |	1.54|
+|min 	|1.00 	|1.00 	|1.00|
+|25% |	277.00 |	2236.00| 	7.00|
+|50% |	508.50 |	9367.00 |	8.00|
+|75% 	|734.00 |	16512.00| 	9.00|
+|max 	|958.00 |34240.00 	|10.00|
+
+Sebelum memulai dengan proses interquartile. Perlu dilihat terlebih dahulu secara sekilas secara statistika deskriptif.
+Berdasarkan output diatas, terlihbat bahwa nilai terkecil dari score adalah 1 dan terbesarnya adalah 10.
+
+### Menghapus symbol pada judul anime
+
+```python
+import re
+def text_cleaning(text):
+    text = re.sub(r'"', '', text)
+    text = re.sub(r'.hack//', '', text)
+    text = re.sub(r'"', '', text)
+    text = re.sub(r'A"s', '', text)
+    text = re.sub(r'I"', 'I\'', text)
+    text = re.sub(r'&', 'and', text)
+
+    return text
+
+anime_df['name'] = anime_df['name'].apply(text_cleaning)
+```
+Symbol dalam judul sudah dihapus
+
+```python
+```
 # Modeling
 
 # Evaluation
