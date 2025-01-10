@@ -651,8 +651,299 @@ recommendations_result
 |3 |	Naruto x UT 	|Action, Comedy, Martial Arts, Shounen, Super P...|
 |4 	|Naruto: Shippuuden |	Action, Comedy, Martial Arts, Shounen, Super P...|
 
+Berikut ini adalah hasil dari Top-N Recommendation menggunakan Content-Based Filterting. Proses penggunaan model berhasil dilakukan dan model dapat memberikan hasil rekomendasi berdasarkan input yang diberikan.
+Pada contoh diatas, model berhasil memberikan rekomendasi anime yang juga ber-genre Action, comedy, martial berdasarkan input yang diberikan, yaitu Naruto yang juga bergenre Action, comedy, martial
+**Model telah dapat berfungsi dengan baik.**
+
+## Collaborative Filtering
+
+### Modeling
+
+```python
+class RecommenderNet(Model):
+
+  def __init__(self, num_users, num_anime, embedding_size, **kwargs):
+    super(RecommenderNet, self).__init__(**kwargs)
+    self.num_users = num_users
+    self.num_anime = num_anime
+    self.embedding_size = embedding_size
+
+    self.user_embedding = layers.Embedding(
+        num_users,
+        embedding_size,
+        embeddings_initializer = 'he_normal',
+        embeddings_regularizer = keras.regularizers.l2(1e-6)
+    )
+    self.user_bias = layers.Embedding(num_users, 1)
+
+    self.anime_embedding = layers.Embedding(
+        num_anime,
+        embedding_size,
+        embeddings_initializer = 'he_normal',
+        embeddings_regularizer = keras.regularizers.l2(1e-6)
+    )
+
+    self.anime_bias = layers.Embedding(num_anime, 1)
+
+  def call(self, inputs):
+    user_vector = self.user_embedding(inputs[:,0])
+    user_bias = self.user_bias(inputs[:, 0])
+    anime_vector = self.anime_embedding(inputs[:, 1])
+    anime_bias = self.anime_bias(inputs[:, 1])
+
+    dot_user_anime = tensorflow.tensordot(user_vector, anime_vector, 2)
+
+    x = dot_user_anime + user_bias + anime_bias
+
+    return tensorflow.nn.sigmoid(x)
+```
+Function utama yang digunakan untuk pembuatan model Collaborative Filtering telah berhasil dibuat
+
+```python
+model = RecommenderNet(num_users, num_anime, 50) # inisialisasi model
+model.compile(
+    loss = keras.losses.BinaryCrossentropy(),
+    optimizer = keras.optimizers.Adam(learning_rate=0.001),
+    metrics=[keras.metrics.RootMeanSquaredError()]
+)
+```
+Inisiasi model telah berhasil dilakukan
+
+```python
+early_stopper = EarlyStopping(monitor='val_root_mean_squared_error',
+                              patience=5,
+                              verbose=1,
+                              restore_best_weights=True)
+```
+Inisiasi Callback Early Stopper yang akan memantau proses training model. Model akan berhenti jika val_root_mean_squared_error tidak mengalami penurunan lagi selama 5 epochs. Setelah berhenti, model pada epoch tertentu yang memiliki performa terbaik akan dipertahankan.
+
+```python
+history = model.fit(
+          x = x_train,
+          y = y_train,
+          batch_size = 8,
+          epochs = 100,
+          callbacks = [early_stopper],
+          validation_data = (x_val, y_val)
+)
+```
+Hasilnya
+
+```python
+Epoch 1/100
+8413/8413 ━━━━━━━━━━━━━━━━━━━━ 33s 4ms/step - loss: 0.6000 - root_mean_squared_error: 0.2275 - val_loss: 0.5299 - val_root_mean_squared_error: 0.1491
+Epoch 2/100
+8413/8413 ━━━━━━━━━━━━━━━━━━━━ 41s 4ms/step - loss: 0.5262 - root_mean_squared_error: 0.1434 - val_loss: 0.5236 - val_root_mean_squared_error: 0.1416
+Epoch 3/100
+8413/8413 ━━━━━━━━━━━━━━━━━━━━ 40s 4ms/step - loss: 0.5227 - root_mean_squared_error: 0.1374 - val_loss: 0.5227 - val_root_mean_squared_error: 0.1406
+Epoch 4/100
+8413/8413 ━━━━━━━━━━━━━━━━━━━━ 42s 4ms/step - loss: 0.5206 - root_mean_squared_error: 0.1349 - val_loss: 0.5214 - val_root_mean_squared_error: 0.1388
+Epoch 5/100
+8413/8413 ━━━━━━━━━━━━━━━━━━━━ 42s 4ms/step - loss: 0.5180 - root_mean_squared_error: 0.1330 - val_loss: 0.5214 - val_root_mean_squared_error: 0.1388
+Epoch 6/100
+8413/8413 ━━━━━━━━━━━━━━━━━━━━ 39s 4ms/step - loss: 0.5180 - root_mean_squared_error: 0.1332 - val_loss: 0.5214 - val_root_mean_squared_error: 0.1390
+Epoch 7/100
+8413/8413 ━━━━━━━━━━━━━━━━━━━━ 41s 4ms/step - loss: 0.5169 - root_mean_squared_error: 0.1320 - val_loss: 0.5217 - val_root_mean_squared_error: 0.1393
+Epoch 8/100
+8413/8413 ━━━━━━━━━━━━━━━━━━━━ 31s 4ms/step - loss: 0.5168 - root_mean_squared_error: 0.1304 - val_loss: 0.5217 - val_root_mean_squared_error: 0.1395
+Epoch 9/100
+8413/8413 ━━━━━━━━━━━━━━━━━━━━ 31s 4ms/step - loss: 0.5165 - root_mean_squared_error: 0.1311 - val_loss: 0.5206 - val_root_mean_squared_error: 0.1379
+Epoch 10/100
+8413/8413 ━━━━━━━━━━━━━━━━━━━━ 41s 4ms/step - loss: 0.5156 - root_mean_squared_error: 0.1301 - val_loss: 0.5212 - val_root_mean_squared_error: 0.1385
+Epoch 11/100
+8413/8413 ━━━━━━━━━━━━━━━━━━━━ 41s 4ms/step - loss: 0.5157 - root_mean_squared_error: 0.1300 - val_loss: 0.5209 - val_root_mean_squared_error: 0.1385
+Epoch 12/100
+8413/8413 ━━━━━━━━━━━━━━━━━━━━ 43s 4ms/step - loss: 0.5178 - root_mean_squared_error: 0.1301 - val_loss: 0.5210 - val_root_mean_squared_error: 0.1385
+Epoch 13/100
+8413/8413 ━━━━━━━━━━━━━━━━━━━━ 38s 4ms/step - loss: 0.5150 - root_mean_squared_error: 0.1296 - val_loss: 0.5213 - val_root_mean_squared_error: 0.1391
+Epoch 14/100
+8413/8413 ━━━━━━━━━━━━━━━━━━━━ 31s 4ms/step - loss: 0.5141 - root_mean_squared_error: 0.1280 - val_loss: 0.5211 - val_root_mean_squared_error: 0.1389
+Epoch 14: early stopping
+Restoring model weights from the end of the best epoch: 9.
+```
+### Result
+
+```python
+user_id = rating_df.user_id.sample(1).iloc[0]
+anime_reviewed_by_user = rating_df[rating_df.user_id == user_id]
+anime_not_reviewed = anime_df[~anime_df['anime_id'].isin(anime_reviewed_by_user.anime_id.values)]['anime_id']
+anime_not_reviewed = list(
+    set(anime_not_reviewed)
+    .intersection(set(anime_to_anime.keys()))
+)
+anime_not_reviewed = [[anime_to_anime.get(x)] for x in anime_not_reviewed]
+user_encoder = user_to_user.get(user_id)
+user_anime_array = np.hstack(
+    ([[user_encoder]] * len(anime_not_reviewed), anime_not_reviewed)
+)
+     
+
+rating = model.predict(user_anime_array).flatten()
+
+top_rating_indices = rating.argsort()[-10:][::-1]
+recommended_anime_ids = [
+    anime_encode_to_anime.get(anime_not_reviewed[x][0]) for x in top_rating_indices
+]
+
+print('List recommendations anime untuk users : {}'.format(user_id))
+print('====' * 9)
+print('Anime dengan skor review tinggi dari user ')
+print('=====' * 8)
+
+top_anime_user = (
+    anime_reviewed_by_user.sort_values(
+        by = 'rating',
+        ascending=False
+    )
+    .head(5)
+    .anime_id.values
+)
+
+anime_df_rows = anime_df[anime_df['anime_id'].isin(top_anime_user)]
+for row in anime_df_rows.itertuples():
+    print(row.name, ':', row.genre)
+
+print('====' * 8)
+print('Top 10 anime recommendation')
+print('====' * 8)
+
+recommended_anime = anime_df[anime_df['anime_id'].isin(recommended_anime_ids)]
+for row in recommended_anime.itertuples():
+    print(row.name, ':', row.genre)
+```
+
+```python
+28/128 ━━━━━━━━━━━━━━━━━━━━ 1s 2ms/step
+List recommendations anime untuk users : 492
+====================================
+Anime dengan skor review tinggi dari user 
+========================================
+One Punch Man : Action, Comedy, Parody, Sci-Fi, Seinen, Super Power, Supernatural
+Ookami to Koushinryou II : Adventure, Fantasy, Historical, Romance
+Dragon Ball Z : Action, Adventure, Comedy, Fantasy, Martial Arts, Shounen, Super Power
+Darker than Black: Kuro no Keiyakusha : Action, Mystery, Sci-Fi, Super Power
+Sword Art Online : Action, Adventure, Fantasy, Game, Romance
+================================
+Top 10 anime recommendation
+================================
+Haibane Renmei : Drama, Fantasy, Mystery, Psychological, Slice of Life
+Gantz 2nd Stage : Action, Drama, Horror, Psychological, Sci-Fi, Supernatural
+Gantz : Action, Drama, Horror, Psychological, Sci-Fi, Supernatural
+Catand#039;s Eye : Action, Adventure, Comedy, Mystery, Romance
+Nissan Serena x One Piece 3D: Mugiwara Chase - Sennyuu!! Sauzando Sanii-gou : Comedy, Fantasy, Shounen
+Kuro no Sumika: Chronus : Psychological
+Mayoi Neko Overrun! Specials : Comedy, Ecchi
+Gilgamesh : Drama, Fantasy, Sci-Fi, Supernatural
+Rhea Gall Force : Action, Mecha, Military, Sci-Fi
+Shoujo Sect : Comedy, Hentai, Romance, Yuri     
+```
+
+Berikut ini adalah hasil dari Top-N Recommendation menggunakan Collaborative Filterting. Proses penggunaan model berhasil dilakukan dan model dapat memberikan hasil rekomendasi berdasarkan rating dari user tertentu dan memberikan rekomendasi anime lainnya yang cocok untuk user tersebut.
+
+Pada contoh diatas, model berhasil memberikan rekomendasi film untuk user nomor 18731 yang pernah memberikan skor rating tinggi ke film dan genre:
+
+   * One Punch Man : Action, Comedy, Parody, Sci-Fi, Seinen, Super Power, Supernatural
+   * Ookami to Koushinryou II : Adventure, Fantasy, Historical, Romance
+   * Dragon Ball Z : Action, Adventure, Comedy, Fantasy, Martial Arts, Shounen, Super Power
+   * Darker than Black: Kuro no Keiyakusha : Action, Mystery, Sci-Fi, Super Power
+   * Sword Art Online : Action, Adventure, Fantasy, Game, Romance
+
+Model memberikan 10 rekomendasi berupa film dengan genre:
+
+   * Haibane Renmei : Drama, Fantasy, Mystery, Psychological, Slice of Life
+   * Gantz 2nd Stage : Action, Drama, Horror, Psychological, Sci-Fi, Supernatural
+   * Gantz : Action, Drama, Horror, Psychological, Sci-Fi, Supernatural
+   * Catand#039;s Eye : Action, Adventure, Comedy, Mystery, Romance
+   * Nissan Serena x One Piece 3D: Mugiwara Chase - Sennyuu!! Sauzando Sanii-gou : Comedy, Fantasy, Shounen
+   * Kuro no Sumika: Chronus : Psychological
+   * Mayoi Neko Overrun! Specials : Comedy, Ecchi
+   * Gilgamesh : Drama, Fantasy, Sci-Fi, Supernatural
+   * Rhea Gall Force : Action, Mecha, Military, Sci-Fi
+   * Shoujo Sect : Comedy, Hentai, Romance, Yuri
+
+Model telah dapat berfungsi dengan cukup baik.
 
 # Evaluation
+## Content-Based Filtering
+
+```python
+# Calculate precision based on title and genre
+def calculate_precision(name, genre):
+    name_genre_anime = anime_df[(anime_df['name'] ==name) & (anime_df['genre'] == genre)]
+    recommended_animes = animes_recommendations(name)
+    relevant_animes = recommended_animes[(recommended_animes['genre'] == genre)]
+    precision = len(relevant_animes['genre'] == genre) / len(recommended_animes['genre'] == genre)
+
+    return precision
+```
+
+```python
+def calculate_precision(name, genre):
+    if not name or not genre:
+        return 0.0  # Default precision for invalid/missing values
+
+    precision = len(relevant_animes['genre'] == genre) / len(recommended_animes['genre'] == genre)
+    return precision
+```
+Function utama yang digunakan untuk menghitung skor Precision dari model Content-Based Filtering telah berhasil dibuat.
+
+```python
+genre_anime_df = anime_df.groupby('genre').first().reset_index()[['genre', 'name']]
+genre_anime_df
+```
+
+|	|genre |	name|
+|0 |	Action 	|Kingsglaive: Final Fantasy XV|
+|1 |	Action, Adventure 	|Michiko to Hatchin|
+|2 |	Action, Adventure, Cars, Comedy, Sci-Fi, Shounen |	eX-Driver|
+|3 |	Action, Adventure, Cars, Mecha, Sci-Fi, Shoune... 	|F-Zero: Falcon Densetsu|
+|4 	|Action, Adventure, Cars, Sci-Fi 	|Tailenders|
+|... |	...| 	...|
+|3224 	|Super Power, Supernatural,| Vampire 	Vampire Sensou|
+|3225| 	Supernatural |	Jiu Se Lu|
+|3226 |	Thriller 	Kyoto Animation: Megane-hen|
+|3227 	|Vampire 	|Yami no Teio: Kyuuketsuki Dracula|
+|3228 |	Yaoi 	|Yebisu Celebrities 1st|
+
+Dataframe diatas adalah dataframe yang digunakan untuk mengecek skor Presisi untuk setiap rekomendasi dari tiap genre. Dataframe tersebut berisi pasangan name dan genre dari tiap genre.
+
+```python
+unique_genres = anime_df['genre'].unique()
+unique_genres
+```     
+```python
+array(['Drama, Romance, School, Supernatural',
+       'Action, Adventure, Drama, Fantasy, Magic, Military, Shounen',
+       'Action, Comedy, Historical, Parody, Samurai, Sci-Fi, Shounen',
+       ..., 'Action, Comedy, Hentai, Romance, Supernatural',
+       'Hentai, Sports', 'Hentai, Slice of Life'], dtype=object)
+```
+Berdasarkan hasil diatas, unique_genre menampung array yang berisi setiap genre yang ada.
+
+## Collaborative Filtering
+```python
+plt.plot(history.history['root_mean_squared_error'])
+plt.plot(history.history['val_root_mean_squared_error'])
+plt.title('model_metrics')
+plt.ylabel('root_mean_squared_error')
+plt.xlabel('epoch')
+plt.legend(['train', 'val'], loc='upper left')
+plt.show()
+```
+![Untitled](https://github.com/user-attachments/assets/4f006ad3-4a0f-4d77-bef9-09fb2303c2b5)
+Gambar 5. plot evaluasi Collaborative Filtering
+
+Berdasarkan plot tersebut, proses training model berhenti pada epoch ke 14 (epochs 1 dimulai dari nomor 0 pada plot) karena callbacks yang berisi early stopper. early stopper menghentikan proses training karena model tidak menunjukkan penurunan yang lebih keci dari val_root_mean_squared_error pada epochs ke-14 selama 5 epochs berturut-turut.
+
+Kemudian, model pada epochs ke 14 yang dipertahankan karena pada epochs tersebut model memiliki performa yang terbaik. Berikut adalah hasil dari metriks pada epocs tersebut:
+
+   * loss: 0.5141
+   * root_mean_squared_error: 0.1280
+   * val_loss: 0.5211
+   * val_root_mean_squared_error: 0.1389
+
+
+    
 # Referensi
 
 **[1] D. Domarco and N. M. S. Iswari, “Rancang Bangun Aplikasi Chatbot Sebagai Media
