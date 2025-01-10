@@ -314,8 +314,8 @@ Berdasarkan output data understanding, terlihat bahwa nilai terkecil dari review
 rating_df = rating_df[~(rating_df.rating == -1)]
 rating_df.describe().apply(lambda s: s.apply('{0:.2f}'.format))
 ```
-```python
-|      |user_id| anime_id|rating|
+
+|    |user_id| anime_id|rating|
 |-------|--------|--------|------|
 |count |	74776.00 |	74776.00 |74776.00|
 |mean |	498.80 |	10640.70 |	7.85|
