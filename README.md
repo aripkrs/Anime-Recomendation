@@ -893,6 +893,7 @@ genre_anime_df
 ```
 
 |	|genre |	name|
+|----|----|----|
 |0 |	Action 	|Kingsglaive: Final Fantasy XV|
 |1 |	Action, Adventure 	|Michiko to Hatchin|
 |2 |	Action, Adventure, Cars, Comedy, Sci-Fi, Shounen |	eX-Driver|
