@@ -400,7 +400,171 @@ rating_df.head(5)
 |101 |1 	|15451 |	10| 	0| 	3|
 |153 	|2 	|11771| 	10| 	1| 	4|
 
-# Modeling
+Proses mapping berhasil dilakukan karena sudah terdapat dua kolom baru, yaitu user dan anime
+
+```python
+num_users = len(user_to_user) # Mendapatkan jumlah user
+num_anime = len(anime_to_anime) # Mendapatkan jumlah rating
+min_rating = min(rating_df['rating']) # Nilai minimum rating
+max_rating = max(rating_df['rating']) # Nilai maksimal rating
+
+print('total user: {}'.format(num_users))
+print('total rating: {}'.format(num_anime))
+print('MIN rating {}'.format(min_rating))
+print('MAX rating: {}'.format(max_rating))
+```
+Berdasarkan output diatas, dapat dilihat bahwa pada rating_df terdapat:
+   * total user: 901
+   * total rating: 4461
+   * MIN rating: 1
+   * MAX rating: 10
+
+### Train Test Split
+
+```python
+rating_df = rating_df.sample(frac=1, random_state=18)     
+rating_df
+```
+|  |user_id |	anime_id 	|rating| 	user| 	anime|
+|------|-------|-------|---------|---------|------|
+|36760 |	401 |	4181 |	10 	|376| 	557|
+|85079 |	890 |	8115 |	7 |	837 |	3160|
+|60255| 	627 |	8536 |	6 |	587 |	818|
+|41755 |	446 |	29758| 	6 |	419| 	1349|
+|56086 |	578 |	11887 |	8 |	540 |	831|  
+
+Berdasarkan output diatas, proses shuffling atau pengacakan berhasil dilakukan
+
+```python
+x_df = rating_df[['user', 'anime']].values # Membuat variabel x_df untuk mencocokkan data user dan anime menjadi satu value
+y_df = rating_df['rating'].apply(lambda x: (x - min_rating) / (max_rating - min_rating)).values # Membuat variabel y_df untuk
+```
+Pemisahan rating_df menjadi dua bagian ke x_df dan y_df untuk proses Train Test Split berhasil dilakukan.
+
+```python
+# Membagi menjadi 90% data train dan 10% data validasi
+train_indices = int(0.9 * rating_df.shape[0])
+x_train, x_val, y_train, y_val = (
+    x_df[:train_indices],
+    x_df[train_indices:],
+    y_df[:train_indices],
+    y_df[train_indices:]
+)
+```
+Proses Train Test Split telah dilakukan ke empat variabel berbebeda dengan komposisi 0.9 untuk train dan 0.1 untuk val. Berikut adalah keempatnya:
+
+   * x_train
+   * x_val
+   * y_train
+   * y_val
+Berdasarkan keempat output diatas, terbukti bahwa proses Train Test Split telah berhasil dilakukan dan berhasil ditampung pada keempat variabel yang telah dibuat.
+
+```python
+print("panjang array dari x_train : " + str(len(x_train)))
+x_train
+```
+Hasilnya: panjang array dari x_train : 67298
+```python
+array([[ 376,  557],
+       [ 837, 3160],
+       [ 587,  818],
+       ...,
+       [ 206,   17],
+       [ 884,  884],
+       [ 776,  676]])
+```
+Hasilnya panjang array dari x_val : 7478
+```python
+array([[ 700, 2523],
+       [ 495, 1253],
+       [ 863, 1829],
+       ...,
+       [  17, 1056],
+       [ 460, 1796],
+       [ 732,   32]])
+```
+
+```python
+print("panjang array dari y_train : " + str(len(y_train)))
+y_train
+```     
+panjang array dari y_train : 67298
+
+```python
+array([1.        , 0.66666667, 0.55555556, ..., 0.66666667, 1.        ,
+       0.77777778])
+```
+   
+```python
+print("panjang array dari y_val : " + str(len(y_val)))
+y_val
+```
+panjang array dari y_val : 7478
+```python
+array([0.66666667, 0.66666667, 0.44444444, ..., 0.88888889, 0.66666667,
+       1.        ])
+ ```
+Berdasarkan keempat output diatas, terbukti bahwa proses Train Test Split telah berhasil dilakukan dan berhasil ditampung pada keempat variabel yang telah dibuat.
+
+# Modeling and Result
+
+```python
+## Content-Based Filtering
+### Modeling
+
+# Inisialisasi TfidfVectorizer
+tf_id = TfidfVectorizer()
+tf_id.fit(anime_df['genre'])
+tf_id.get_feature_names_out()
+```
+```python
+array(['action', 'adventure', 'ai', 'arts', 'cars', 'comedy', 'dementia',
+       'demons', 'drama', 'ecchi', 'fantasy', 'fi', 'game', 'harem',
+       'hentai', 'historical', 'horror', 'josei', 'kids', 'life', 'magic',
+       'martial', 'mecha', 'military', 'music', 'mystery', 'of', 'parody',
+       'police', 'power', 'psychological', 'romance', 'samurai', 'school',
+       'sci', 'seinen', 'shoujo', 'shounen', 'slice', 'space', 'sports',
+       'super', 'supernatural', 'thriller', 'vampire', 'yaoi', 'yuri'],
+      dtype=object)
+ ```
+```python
+tfidf_matrix = tf_id.fit_transform(anime_df['genre'])
+tfidf_matrix.shape # Melihat ukuran matrix tfidf
+ ```
+Hasilnya (12017, 47)
+
+Berdasarkan output diatas, dapat dilihat bahwa ukuran matriksnya sebesar 12017 x 47
+
+```python
+tfidf_matrix.todense()
+```
+```python
+matrix([[0.        , 0.        , 0.        , ..., 0.        , 0.        ,
+         0.        ],
+        [0.29498527, 0.3162867 , 0.        , ..., 0.        , 0.        ,
+         0.        ],
+        [0.2516182 , 0.        , 0.        , ..., 0.        , 0.        ,
+         0.        ],
+        ...,
+        [0.        , 0.        , 0.        , ..., 0.        , 0.        ,
+         0.        ],
+        [0.        , 0.        , 0.        , ..., 0.        , 0.        ,
+         0.        ],
+        [0.        , 0.        , 0.        , ..., 0.        , 0.        ,
+         0.        ]])
+```
+Berdasarkan output diatas, proses operasi menggunakan todense() sudah berhasil dilakukan
+
+```python
+## Membuat dataframe untuk melihat tf-idf matrix
+pd.DataFrame(
+    tfidf_matrix.todense(),
+    columns=tf_id.get_feature_names_out(),
+    index=anime_df.name
+).sample(17, axis=1).sample(7, axis=0)
+```
+![image](https://github.com/user-attachments/assets/744027e8-ad1b-42eb-b0e2-c77380ba1b84)
+Berdasarkan output diatas, dataframe berhasil dibuat dengan data dari matriks yang sudah dibuat sebelumnya
 
 # Evaluation
 # Referensi
