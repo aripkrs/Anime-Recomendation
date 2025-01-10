@@ -564,7 +564,93 @@ pd.DataFrame(
 ).sample(17, axis=1).sample(7, axis=0)
 ```
 ![image](https://github.com/user-attachments/assets/744027e8-ad1b-42eb-b0e2-c77380ba1b84)
+
 Berdasarkan output diatas, dataframe berhasil dibuat dengan data dari matriks yang sudah dibuat sebelumnya
+
+```python
+# Proses perhitungan cosine_similarity
+cosine_sim = cosine_similarity(tfidf_matrix)
+cosine_sim
+```
+
+```python
+array([[1.        , 0.14715318, 0.        , ..., 0.        , 0.        ,
+        0.        ],
+       [0.14715318, 1.        , 0.17877808, ..., 0.        , 0.        ,
+        0.        ],
+       [0.        , 0.17877808, 1.        , ..., 0.        , 0.        ,
+        0.        ],
+       ...,
+       [0.        , 0.        , 0.        , ..., 1.        , 1.        ,
+        1.        ],
+       [0.        , 0.        , 0.        , ..., 1.        , 1.        ,
+        1.        ],
+       [0.        , 0.        , 0.        , ..., 1.        , 1.        ,
+        1.        ]])
+```
+  Berdasarkan output diatas, proses perhitungan cosine_similarity telah berhasil dilakukan.
+
+
+```python
+ # Membuat dataframe dari variabel cosine_sim
+cosine_sim_df = pd.DataFrame(cosine_sim, index=anime_df['name'], columns=anime_df['name'])
+print('Ukuran Dataframe : ', cosine_sim_df.shape)
+```
+Ukuran Dataframe :  (12017, 12017)
+
+Berdasarkan output diatas, proses pembuatan dataframe berhasil dilakukan dan dataframe memiliki ukuran 12017 x 12017.
+
+```python
+# Melihat similarity matrix pada data
+cosine_sim_df.sample(5, axis=1).sample(7, axis=0)
+```
+|name |	Miracle Shoujo Limit-chan |	Puchi Puri Yuushi 	|Toki no Daichi: Hana no Oukoku no Majo| 	Lime-iro Senkitan: Nankoku Yume Roman |Minihams no Kekkon Song|
+|-------|-------|-------|------|--------|--------|				
+|Denpa Kyoushi (TV)| 	0.263027 	|0.104995| 	0.000000| 	0.108386| 	0.000000|
+|Mienu Me ni Kanjita Kumotoriyama no Asahi| 	0.000000 |	0.000000 |	0.000000 |	0.000000| 	0.466107|
+|Servant x Service| 	0.065020 |	0.100156 |	0.000000| 	0.103391 |	0.000000|
+|High School DxD BorN |	0.159576 |	0.063700 	|0.000000| 	0.434977| 	0.000000|
+|Chuumon no Ooi Ryouriten (1991)| 	0.000000 |	0.178730 |	0.302952| 	0.000000| 	0.000000|
+|Kiteretsu Daihyakka |	0.058981 |	0.090854| 	0.000000| 	0.093788| 	0.000000|
+|Shintaisou: Shin |	0.237709 	|0.000000| 	0.000000 |	0.000000| 	0.000000|     
+
+Output diatas adalah tampilan dari dataframe yang telah dibuat.
+
+```python
+def anime_recommendations(name, similarity_data=cosine_sim_df, items=anime_df[['name', 'genre']], k=5):
+    index = similarity_data.loc[:,name].to_numpy().argpartition(range(-1, -k, -1))
+    closest_data = similarity_data.columns[index[-1:-(k+2):-1]]
+    closest_data = closest_data.drop(name, errors='ignore')
+
+    return pd.DataFrame(closest_data).merge(items).head(k)
+
+```
+Function utama yang digunakan untuk pembuatan model Content Based telah berhasil dibuat.
+
+### Result
+
+```python
+anime_df[anime_df.name.eq('Naruto')]
+```
+
+||anime_id| 	name| 	genre 	|type| 	episodes| 	rating| 	members|
+|---|-------|--------|-------|--------|---------|--------|-------|
+|841 	|20| 	Naruto 	|Action, Comedy, Martial Arts, Shounen, Super P... |	TV| 	220| 	7.81| 	683297|
+
+Untuk contoh atau simulasi penggunaan model, kita gunakan naruto yang ber-genre Action, Comedy, Martial Arts, Shounen, Super P...
+
+```python
+recommendations_result = anime_recommendations('Naruto')
+recommendations_result
+```
+||name |	genre|
+|----|------|-----|
+|0 	|Naruto: Shippuuden Movie 4 - The Lost Tower 	|Action, Comedy, Martial Arts, Shounen, Super P...|
+|1 |	Naruto Shippuuden: Sunny Side Battle 	|Action, Comedy, Martial Arts, Shounen, Super P...|
+|2 	|Boruto: Naruto the Movie - Naruto ga Hokage ni... 	|Action, Comedy, Martial Arts, Shounen, Super P...|
+|3 |	Naruto x UT 	|Action, Comedy, Martial Arts, Shounen, Super P...|
+|4 	|Naruto: Shippuuden |	Action, Comedy, Martial Arts, Shounen, Super P...|
+
 
 # Evaluation
 # Referensi
