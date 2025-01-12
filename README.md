@@ -831,8 +831,7 @@ Untuk mengukur bagaimana performa dari model yang telah dibuat, diperlukannya me
 
 Berikut ini adalah penjelasan mengenai setiap metrik beserta hasil perhitungan metrik dari model yang telah dibuat :
 
-- `Content-Based Filtering` : `Precision`
-  - `Precision`
+## Content-Based Filtering
   
     Presisi merupakan ukuran yang menilai efektivitas model klasifikasi dalam mengidentifikasi label positif. Ukuran ini merupakan perbandingan antara jumlah prediksi yang benar-benar positif dengan keseluruhan hasil yang diprediksi sebagai positif, termasuk yang sebenarnya negatif.
 
@@ -856,7 +855,7 @@ Berikut ini adalah penjelasan mengenai setiap metrik beserta hasil perhitungan m
   - Penjelasan Hasil `Precision` dari model `Content-Based Learning`
   - Fungsi dari `calculate_precision` digunakan untuk perhitungan Presisi berdasarkan formula Presisi
 
- ## Content-Based Filtering
+ 
 ```python
 # Calculate precision based on title and genre
 def calculate_precision(name, genre):
