@@ -278,6 +278,10 @@ Dataset rating anime memiliki rating terendah yang diberikan user pada suatu ani
 
 **1 duplikat data akan kita hapus dalam rating_df**
 
+Data duplikat adalah baris data yang sama persis untuk setiap variabel yang ada. Dataset yang digunakan perlu diperiksa juga apakah dataset memiliki data yang sama atau data duplikat. Jika ada, maka data tersebut harus ditangani dengan menghapus data duplikat tersebut.
+
+Alasan: Data duplikat perlu didektesi dan dihapus karena jika dibiarkan pada dataset dapat membuat model Anda memiliki bias, sehingga menyebabkan overfitting. Dengan kata lain, model memiliki performa akurasi yang baik pada data pelatihan, tetapi buruk pada data baru. Menghapus data duplikat dapat membantu memastikan bahwa model Anda dapat menemukan pola yang ada lebih baik lagi.
+
 ```python
 anime_df=anime_df.drop_duplicates()
 ```
@@ -294,6 +298,10 @@ anime_df.shape
 Missing value Berhasil ditangani.
 
 ### Outliers Detection and Removal
+
+Outliers adalah titik data yang secara signifikan berbeda dari sebagian besar data dalam kumpulan data. Outliers dapat muncul karena variasi dalam pengukuran atau mungkin menunjukkan kesalahan eksperimental; dalam beberapa kasus, outliers bisa juga menunjukkan variabilitas yang sebenarnya dalam data. Penting untuk menganalisis outliers karena mereka dapat memiliki pengaruh besar pada hasil analisis statistik.
+
+Alasan:Outliers perlu dideteksi dan dihapus karena jika dibiarkan dapat merusak hasil analisis statistik pada kumpulan data sehingga menghasilkan performa model yang kurang baik. Selain itu, Mendeteksi dan menghapus outlier dapat membantu meningkatkan performa model Machine Learning menjadi lebih baik.
 
 Berdasarkan output data understanding, terlihat bahwa nilai terkecil dari review adalah -1 dan terbesarnya adalah 10. Rating -1 menandakan bahwa user menonton anime, namun tidak memberikan rating.
 ```python
@@ -536,6 +544,9 @@ Kekurangan Content-Based Filtering:
 Pendekatan ini menggunakan atribut-atribut atau fitur-fitur item untuk menentukan kesamaan antara item yang ada. Dalam konteks proyek ini, content-based filtering akan memberikan rekomendasi buku berdasarkan genre dari anime yang ada. Model akan memberikan rekomendasi buku yang memiliki author yang sama.
 dimulai dari Proses perhitungan cosine_similarity.
 
+**Berikut ini adalah proses Modelling and Result dari kedua algoritma tersebut:**
+
+* cosine_similarity()
 ```python
 # Proses perhitungan cosine_similarity
 cosine_sim = cosine_similarity(tfidf_matrix)
@@ -560,6 +571,7 @@ array([[1.        , 0.14715318, 0.        , ..., 0.        , 0.        ,
  
  Berdasarkan output diatas, proses perhitungan cosine_similarity telah berhasil dilakukan.
 
+* Pembuatan dataframe dari cosine_sim
 
 ```python
  # Membuat dataframe dari variabel cosine_sim
@@ -570,21 +582,12 @@ Ukuran Dataframe :  (12017, 12017)
 
 Berdasarkan output diatas, proses pembuatan dataframe berhasil dilakukan dan dataframe memiliki ukuran 12017 x 12017.
 
+* Similarity matrix pada data
 ```python
 # Melihat similarity matrix pada data
 cosine_sim_df.sample(5, axis=1).sample(7, axis=0)
 ```
-|name |	Miracle Shoujo Limit-chan |	Puchi Puri Yuushi 	|Toki no Daichi: Hana no Oukoku no Majo| 	Lime-iro Senkitan: Nankoku Yume Roman |Minihams no Kekkon Song|
-|-------|-------|-------|------|--------|--------|				
-|Denpa Kyoushi (TV)| 	0.263027 	|0.104995| 	0.000000| 	0.108386| 	0.000000|
-|Mienu Me ni Kanjita Kumotoriyama no Asahi| 	0.000000 |	0.000000 |	0.000000 |	0.000000| 	0.466107|
-|Servant x Service| 	0.065020 |	0.100156 |	0.000000| 	0.103391 |	0.000000|
-|High School DxD BorN |	0.159576 |	0.063700 	|0.000000| 	0.434977| 	0.000000|
-|Chuumon no Ooi Ryouriten (1991)| 	0.000000 |	0.178730 |	0.302952| 	0.000000| 	0.000000|
-|Kiteretsu Daihyakka |	0.058981 |	0.090854| 	0.000000| 	0.093788| 	0.000000|
-|Shintaisou: Shin |	0.237709 	|0.000000| 	0.000000 |	0.000000| 	0.000000|     
-
-Output diatas adalah tampilan dari dataframe yang telah dibuat.
+* Pembuatan function anime_recommendations()
 
 ```python
 def anime_recommendations(name, similarity_data=cosine_sim_df, items=anime_df[['name', 'genre']], k=5):
@@ -629,6 +632,8 @@ Pada contoh diatas, model berhasil memberikan rekomendasi anime yang juga ber-ge
 
 ### Modeling
 
+* Pembuatan class RecommenderNet
+
 ```python
 class RecommenderNet(Model):
 
@@ -669,6 +674,8 @@ class RecommenderNet(Model):
 ```
 Function utama yang digunakan untuk pembuatan model Collaborative Filtering telah berhasil dibuat
 
+* Inisiasi Model
+  
 ```python
 model = RecommenderNet(num_users, num_anime, 50) # inisialisasi model
 model.compile(
@@ -679,6 +686,7 @@ model.compile(
 ```
 Inisiasi model telah berhasil dilakukan
 
+* Early Stopper
 ```python
 early_stopper = EarlyStopping(monitor='val_root_mean_squared_error',
                               patience=5,
@@ -687,6 +695,7 @@ early_stopper = EarlyStopping(monitor='val_root_mean_squared_error',
 ```
 Inisiasi Callback Early Stopper yang akan memantau proses training model. Model akan berhenti jika val_root_mean_squared_error tidak mengalami penurunan lagi selama 5 epochs. Setelah berhenti, model pada epoch tertentu yang memiliki performa terbaik akan dipertahankan.
 
+* Training
 ```python
 history = model.fit(
           x = x_train,
@@ -697,39 +706,18 @@ history = model.fit(
           validation_data = (x_val, y_val)
 )
 ```
-Hasilnya
+Berikut ini hasil proses training yang sudah selesai pada epochs ke-11 yang memiliki :
+   * loss : 0.5163
+   * root_mean_squared_error : 0.1302
+   * val_loss : 0.5211
+   * val_root_mean_squared_error : 0.1358
+
 
 ```python
-Epoch 1/100
-8413/8413 ━━━━━━━━━━━━━━━━━━━━ 33s 4ms/step - loss: 0.6000 - root_mean_squared_error: 0.2275 - val_loss: 0.5299 - val_root_mean_squared_error: 0.1491
-Epoch 2/100
-8413/8413 ━━━━━━━━━━━━━━━━━━━━ 41s 4ms/step - loss: 0.5262 - root_mean_squared_error: 0.1434 - val_loss: 0.5236 - val_root_mean_squared_error: 0.1416
-Epoch 3/100
-8413/8413 ━━━━━━━━━━━━━━━━━━━━ 40s 4ms/step - loss: 0.5227 - root_mean_squared_error: 0.1374 - val_loss: 0.5227 - val_root_mean_squared_error: 0.1406
-Epoch 4/100
-8413/8413 ━━━━━━━━━━━━━━━━━━━━ 42s 4ms/step - loss: 0.5206 - root_mean_squared_error: 0.1349 - val_loss: 0.5214 - val_root_mean_squared_error: 0.1388
-Epoch 5/100
-8413/8413 ━━━━━━━━━━━━━━━━━━━━ 42s 4ms/step - loss: 0.5180 - root_mean_squared_error: 0.1330 - val_loss: 0.5214 - val_root_mean_squared_error: 0.1388
-Epoch 6/100
-8413/8413 ━━━━━━━━━━━━━━━━━━━━ 39s 4ms/step - loss: 0.5180 - root_mean_squared_error: 0.1332 - val_loss: 0.5214 - val_root_mean_squared_error: 0.1390
-Epoch 7/100
-8413/8413 ━━━━━━━━━━━━━━━━━━━━ 41s 4ms/step - loss: 0.5169 - root_mean_squared_error: 0.1320 - val_loss: 0.5217 - val_root_mean_squared_error: 0.1393
-Epoch 8/100
-8413/8413 ━━━━━━━━━━━━━━━━━━━━ 31s 4ms/step - loss: 0.5168 - root_mean_squared_error: 0.1304 - val_loss: 0.5217 - val_root_mean_squared_error: 0.1395
-Epoch 9/100
-8413/8413 ━━━━━━━━━━━━━━━━━━━━ 31s 4ms/step - loss: 0.5165 - root_mean_squared_error: 0.1311 - val_loss: 0.5206 - val_root_mean_squared_error: 0.1379
-Epoch 10/100
-8413/8413 ━━━━━━━━━━━━━━━━━━━━ 41s 4ms/step - loss: 0.5156 - root_mean_squared_error: 0.1301 - val_loss: 0.5212 - val_root_mean_squared_error: 0.1385
 Epoch 11/100
-8413/8413 ━━━━━━━━━━━━━━━━━━━━ 41s 4ms/step - loss: 0.5157 - root_mean_squared_error: 0.1300 - val_loss: 0.5209 - val_root_mean_squared_error: 0.1385
-Epoch 12/100
-8413/8413 ━━━━━━━━━━━━━━━━━━━━ 43s 4ms/step - loss: 0.5178 - root_mean_squared_error: 0.1301 - val_loss: 0.5210 - val_root_mean_squared_error: 0.1385
-Epoch 13/100
-8413/8413 ━━━━━━━━━━━━━━━━━━━━ 38s 4ms/step - loss: 0.5150 - root_mean_squared_error: 0.1296 - val_loss: 0.5213 - val_root_mean_squared_error: 0.1391
-Epoch 14/100
-8413/8413 ━━━━━━━━━━━━━━━━━━━━ 31s 4ms/step - loss: 0.5141 - root_mean_squared_error: 0.1280 - val_loss: 0.5211 - val_root_mean_squared_error: 0.1389
-Epoch 14: early stopping
-Restoring model weights from the end of the best epoch: 9.
+8413/8413 ━━━━━━━━━━━━━━━━━━━━ 82s 5ms/step - loss: 0.5163 - root_mean_squared_error: 0.1302 - val_loss: 0.5211 - val_root_mean_squared_error: 0.1385
+Epoch 11: early stopping
+Restoring model weights from the end of the best epoch: 6.
 ```
 ### Result
 
@@ -834,8 +822,41 @@ Model memberikan 10 rekomendasi berupa film dengan genre:
 Model telah dapat berfungsi dengan cukup baik.
 
 # Evaluation
-## Content-Based Filtering
 
+
+Untuk mengukur bagaimana performa dari model yang telah dibuat, diperlukannya metriks evaluasi untuk mengevaluasi model sistem rekomendasi anime. Berikut adalah rincian metrik yang digunakan untuk tiap pendekatan:
+
+- `Content-Based Filtering` : `Precision`
+- `Collaborative Filtering` : `Root Mean Squared Error`
+
+Berikut ini adalah penjelasan mengenai setiap metrik beserta hasil perhitungan metrik dari model yang telah dibuat :
+
+- `Content-Based Filtering` : `Precision`
+  - `Precision`
+  
+    Presisi merupakan ukuran yang menilai efektivitas model klasifikasi dalam mengidentifikasi label positif. Ukuran ini merupakan perbandingan antara jumlah prediksi yang benar-benar positif dengan keseluruhan hasil yang diprediksi sebagai positif, termasuk yang sebenarnya negatif.
+
+    Berikut adalah formula dan cara kerja dari `Precision` :
+    
+    - **Formula**
+
+      $$Precision = TP/(TP+FP)$$
+
+      Dalam Konteks sistem rekomendasi menjadi:
+
+      ![Precision](https://github.com/ensiklopedical/system-recommendation/assets/115972304/efd048df-2997-4808-addc-da64f4d34469)
+
+      Gambar 5 - Formula Precision
+      
+
+    - **Cara Kerja**
+
+      Formula tersebut mengukur presisi dalam konteks sistem rekomendasi. Presisi dihitung dengan membagi jumlah rekomendasi yang relevan dengan jumlah total item yang direkomendasikan. Jadi, jika sebuah sistem merekomendasikan 10 film dan hanya 6 yang relevan atau disukai oleh pengguna, maka presisi sistem tersebut adalah 0.6 atau 60%. Ini menunjukkan seberapa akurat sistem dalam memberikan rekomendasi yang sesuai dengan kebutuhan atau selera pengguna.
+      
+  - Penjelasan Hasil `Precision` dari model `Content-Based Learning`
+  - Fungsi dari `calculate_precision` digunakan untuk perhitungan Presisi berdasarkan formula Presisi
+
+ ## Content-Based Filtering
 ```python
 # Calculate precision based on title and genre
 def calculate_precision(name, genre):
@@ -846,52 +867,35 @@ def calculate_precision(name, genre):
 
     return precision
 ```
-
 ```python
-def calculate_precision(name, genre):
-    if not name or not genre:
-        return 0.0  # Default precision for invalid/missing values
-
-    precision = len(relevant_animes['genre'] == genre) / len(recommended_animes['genre'] == genre)
-    return precision
+print(f'The precision of the recommendation system is {precision:.1%}')
 ```
-Function utama yang digunakan untuk menghitung skor Precision dari model Content-Based Filtering telah berhasil dibuat.
+The precision of the recommendation system is 100.0%
 
-```python
-genre_anime_df = anime_df.groupby('genre').first().reset_index()[['genre', 'name']]
-genre_anime_df
-```
+Dari hasil rekomendasi bagian result di atas, diketahui bahwa Naruto termasuk ke dalam genre (Action, Comedy, Martial Arts, Shounen, Super P) Dari 5 item yang direkomendasikan, 5 item memiliki genre (Action, Comedy, Martial Arts, Shounen, Super P). Precision = TP/(TP+FP) Dalam Konteks sistem rekomendasi menjadi:
 
-|	|genre |	name|
-|----|----|----|
-|0 |	Action 	|Kingsglaive: Final Fantasy XV|
-|1 |	Action, Adventure 	|Michiko to Hatchin|
-|2 |	Action, Adventure, Cars, Comedy, Sci-Fi, Shounen |	eX-Driver|
-|3 |	Action, Adventure, Cars, Mecha, Sci-Fi, Shoune... 	|F-Zero: Falcon Densetsu|
-|4 	|Action, Adventure, Cars, Sci-Fi 	|Tailenders|
-|... |	...| 	...|
-|3224 	|Super Power, Supernatural,| Vampire 	Vampire Sensou|
-|3225| 	Supernatural |	Jiu Se Lu|
-|3226 |	Thriller 	Kyoto Animation: Megane-hen|
-|3227 	|Vampire 	|Yami no Teio: Kyuuketsuki Dracula|
-|3228 |	Yaoi 	|Yebisu Celebrities 1st|
+Ini sesuai dengan formula tunjukan P recision = #of recommendation that are relevant/#of item we recommend. Pada contoh rekomendasi resto di atas: Precission = 5/5. **Jadi presisinya = 100%** 
 
-Dataframe diatas adalah dataframe yang digunakan untuk mengecek skor Presisi untuk setiap rekomendasi dari tiap genre. Dataframe tersebut berisi pasangan name dan genre dari tiap genre.
+**Model memiliki performa yang sangat baik dalam memberikan rekomendasi secara Content-Based Filtering.**
 
-```python
-unique_genres = anime_df['genre'].unique()
-unique_genres
-```     
-```python
-array(['Drama, Romance, School, Supernatural',
-       'Action, Adventure, Drama, Fantasy, Magic, Military, Shounen',
-       'Action, Comedy, Historical, Parody, Samurai, Sci-Fi, Shounen',
-       ..., 'Action, Comedy, Hentai, Romance, Supernatural',
-       'Hentai, Sports', 'Hentai, Slice of Life'], dtype=object)
-```
-Berdasarkan hasil diatas, unique_genre menampung array yang berisi setiap genre yang ada.
 
 ## Collaborative Filtering
+
+  - `Root Mean Squared Error`
+    
+    Root Mean Square Error (RMSE) adalah metrik yang sering digunakan dalam machine learning untuk mengukur seberapa baik sebuah model prediktif dapat memperkirakan nilai yang sebenarnya. RMSE merupakan akar kuadrat dari rata-rata perbedaan kuadrat antara nilai yang diprediksi oleh model dan nilai yang sebenarnya (nilai aktual).
+
+    Berikut ini adalah formula dan cara kerja dari `Root Mean Squared Error` :
+
+    - **Formula**
+   
+      $$RMSE = \sqrt{\frac{1}{n} \sum_{i=1}^{n} (y_i - \hat{y}_i)^2}$$
+   
+    - **Cara Kerja**
+      
+      RMSE menghitung akar kuadrat dari rata-rata perbedaan kuadrat antara nilai yang diprediksi oleh model dan nilai sebenarnya. Proses kerjanya melibatkan beberapa langkah. Pertama, untuk setiap titik data, kita menghitung selisih antara prediksi model dan nilai aktual. Selisih ini kemudian dikuadratkan untuk menghilangkan nilai negatif dan memberikan bobot lebih pada kesalahan yang lebih besar. Setelah itu, kita menghitung rata-rata dari nilai-nilai kuadrat tersebut. Terakhir, kita mengambil akar kuadrat dari rata-rata ini untuk mendapatkan RMSE.
+    
+  - Penjelasan Hasil `Root Mean Squared Error` dari model `Collaborative Learning`
 ```python
 plt.plot(history.history['root_mean_squared_error'])
 plt.plot(history.history['val_root_mean_squared_error'])
@@ -902,17 +906,16 @@ plt.legend(['train', 'val'], loc='upper left')
 plt.show()
 ```
 ![Untitled](https://github.com/user-attachments/assets/4f006ad3-4a0f-4d77-bef9-09fb2303c2b5)
-Gambar 5. plot evaluasi Collaborative Filtering
+Gambar 6. plot evaluasi Collaborative Filtering
 
-Berdasarkan plot tersebut, proses training model berhenti pada epoch ke 14 (epochs 1 dimulai dari nomor 0 pada plot) karena callbacks yang berisi early stopper. early stopper menghentikan proses training karena model tidak menunjukkan penurunan yang lebih keci dari val_root_mean_squared_error pada epochs ke-14 selama 5 epochs berturut-turut.
+Berdasarkan plot tersebut, proses training model berhenti pada epoch ke 11 (epochs 1 dimulai dari nomor 0 pada plot) karena callbacks yang berisi early stopper. early stopper menghentikan proses training karena model tidak menunjukkan penurunan yang lebih keci dari val_root_mean_squared_error pada epochs ke-11 selama 6 epochs berturut-turut.
 
-Kemudian, model pada epochs ke 14 yang dipertahankan karena pada epochs tersebut model memiliki performa yang terbaik. Berikut adalah hasil dari metriks pada epocs tersebut:
+Kemudian, model pada epochs ke 11 yang dipertahankan karena pada epochs tersebut model memiliki performa yang terbaik. Berikut adalah hasil dari metriks pada epocs tersebut:
 
-   * loss: 0.5141
-   * root_mean_squared_error: 0.1280
-   * val_loss: 0.5211
-   * val_root_mean_squared_error: 0.1389
-
+   * loss : 0.5163
+   * root_mean_squared_error : 0.1302
+   * val_loss : 0.5211
+   * val_root_mean_squared_error : 0.1358
 
     
 # Referensi
