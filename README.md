@@ -872,7 +872,7 @@ print(f'The precision of the recommendation system is {precision:.1%}')
 ```
 The precision of the recommendation system is 100.0%
 
-Dari hasil rekomendasi bagian result di atas, diketahui bahwa Naruto termasuk ke dalam genre (Action, Comedy, Martial Arts, Shounen, Super P) Dari 5 item yang direkomendasikan, 5 item memiliki genre (Action, Comedy, Martial Arts, Shounen, Super P). Precision = TP/(TP+FP) Dalam Konteks sistem rekomendasi menjadi:
+Dari hasil rekomendasi bagian result di atas, diketahui bahwa Naruto termasuk ke dalam genre (Action, Comedy, Martial Arts, Shounen, Super P) Dari 5 item yang direkomendasikan, 5 item memiliki genre (Action, Comedy, Martial Arts, Shounen, Super P). 
 
 **Precision = #of recommendation that are relevant/#of item we recommend**
 
