@@ -874,11 +874,7 @@ The precision of the recommendation system is 100.0%
 
 Dari hasil rekomendasi bagian result di atas, diketahui bahwa Naruto termasuk ke dalam genre (Action, Comedy, Martial Arts, Shounen, Super P) Dari 5 item yang direkomendasikan, 5 item memiliki genre (Action, Comedy, Martial Arts, Shounen, Super P). Precision = TP/(TP+FP) Dalam Konteks sistem rekomendasi menjadi:
 
-Ini sesuai dengan formula tunjukan 
-
-P recision = #of recommendation that are relevant/#of item we recommend. 
-
-Pada contoh rekomendasi animedi bagian result di atas: 
+**Precision = #of recommendation that are relevant/#of item we recommend**
 
   Precission = 5/5. **Jadi presisinya = 100%** 
 
